@@ -1,0 +1,4 @@
+runtime: nodejs20
+env_variables:
+  MAPS_API_KEY: "AIzaSyBYC2BWNwux3OXO72-zVC_5kc37e4ffBVk" 
+  # Set the above variable in your deployment environment or un-comment and paste here.

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Election Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="translations.js" defer></script>
+    <script src="app.js" defer></script>
+</head>
+<body>
+    <div class="background-effect"></div>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <h1 data-i18n="appTitle">Indian Election Assistant</h1>
+            </div>
+            <div class="controls">
+                <!-- Settings removed for backend -->
+                <button id="audio-toggle" class="btn outline" data-i18n="audioOnBtn">Turn Audio On</button>
+                <button id="lang-toggle" class="btn primary" data-i18n="langToggle">हिंदी में देखें</button>
+            </div>
+        </div>
+        <p class="tagline" data-i18n="tagline">Your interactive guide to the democratic process</p>
+    </header>
+
+    <main>
+        <!-- Weather Alert Banner -->
+        <div id="weather-banner" class="weather-banner hidden">
+            <span class="weather-icon">⚠️</span>
+            <span id="weather-text">Weather checking...</span>
+        </div>
+
+        <section id="location-booth" class="section glass-panel">
+            <h2>Find My Polling Booth</h2>
+            <div class="location-controls">
+                <button id="locate-me-btn" class="btn primary">Locate Me & Find Route</button>
+                <p id="location-status" class="status-text"></p>
+            </div>
+            <div id="crowd-banner" class="weather-banner hidden" style="margin-top: 1rem; margin-bottom: 0;">
+                <span id="crowd-icon">👥</span>
+                <span id="crowd-text">Checking booth crowd levels...</span>
+            </div>
+            <div id="map-container" class="map-container hidden">
+                <div id="map"></div>
+            </div>
+        </section>
+
+        <section id="timeline" class="section glass-panel">
+            <h2 data-i18n="timelineTitle">Election Timeline</h2>
+            <div class="timeline-controls text-center">
+                <button id="generate-timeline-btn" class="btn primary">Get Live Timelines (Nearest Election)</button>
+                <p id="timeline-status" class="status-text"></p>
+            </div>
+            <div id="dynamic-timeline-container" class="timeline-container hidden">
+                <!-- Populated by Vertex AI -->
+            </div>
+        </section>
+
+        <section id="steps" class="section glass-panel">
+            <h2 data-i18n="stepsTitle">How to Vote</h2>
+            <div class="cards-grid">
+                <div class="card">
+                    <h3 data-i18n="step1Title">1. Register to Vote</h3>
+                    <p data-i18n="step1Desc">Apply for a Voter ID (EPIC) via Form 6 on the NVSP portal or Voter Helpline App. You must be an Indian citizen and 18+ years old.</p>
+                    <button class="read-aloud-btn" aria-label="Read aloud">🔊</button>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="step2Title">2. Check Voter List</h3>
+                    <p data-i18n="step2Desc">Verify your name in the Electoral Roll online or via SMS to ensure you can vote.</p>
+                    <button class="read-aloud-btn" aria-label="Read aloud">🔊</button>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="step3Title">3. Find Polling Booth</h3>
+                    <p data-i18n="step3Desc">Locate your designated polling station online using your EPIC number.</p>
+                    <button class="read-aloud-btn" aria-label="Read aloud">🔊</button>
+                </div>
+                <div class="card">
+                    <h3 data-i18n="step4Title">4. Cast Your Vote</h3>
+                    <p data-i18n="step4Desc">Bring your Voter ID (or approved alternative ID). Press the EVM button next to your chosen candidate, and verify via VVPAT.</p>
+                    <button class="read-aloud-btn" aria-label="Read aloud">🔊</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Chat Assistant Widget -->
+    <div id="chat-widget" class="chat-widget closed">
+        <div class="chat-header" id="chat-header-btn">
+            <div class="chat-title">
+                <span class="chat-icon">💬</span>
+                <span data-i18n="chatHeader">Election Assistant</span>
+            </div>
+            <button class="close-chat-btn">✖</button>
+        </div>
+        <div class="chat-body">
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot">
+                    <div class="message-content" data-i18n="chatGreeting">
+                        Hello! I am your Election Assistant. How can I help you today?
+                    </div>
+                </div>
+            </div>
+            <div class="chat-quick-replies" id="chat-quick-replies">
+                <button class="qr-btn" data-intent="register" data-i18n="qrRegister">How do I register?</button>
+                <button class="qr-btn" data-intent="docs" data-i18n="qrDocs">What documents are needed?</button>
+                <button class="qr-btn" data-intent="evm" data-i18n="qrEVM">How to use an EVM?</button>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chat-input" placeholder="Ask a question..." data-i18n-placeholder="chatInputPlaceholder">
+                <button id="chat-send" data-i18n="chatSendButton">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal Removed for Backend Version -->
+</body>
+</html>
