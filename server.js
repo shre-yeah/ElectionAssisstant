@@ -1,15 +1,40 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 const { VertexAI } = require('@google-cloud/vertexai');
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use(cors());
+// Security Middleware: Set HTTP Headers
+// We disable Content Security Policy (CSP) temporarily because it blocks Google Maps external scripts.
+app.use(helmet({ contentSecurityPolicy: false }));
+
+// CORS: Restrict who can make API calls. 
+// If ALLOWED_ORIGIN is in .env (e.g., https://your-cloud-run.app), it restricts to that. Otherwise allows all for local testing.
+const corsOptions = {
+    origin: process.env.ALLOWED_ORIGIN || '*',
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Security Middleware: Rate Limiting
+// Protects billing from bot abuse by limiting each IP to 30 requests per 15 minutes
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, 
+    max: 30, 
+    message: { error: 'Too many requests from this IP. Please wait 15 minutes.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// Apply rate limiting to all exposed API routes
+app.use('/api/', apiLimiter);
 
 // Initialize Vertex AI
 // NOTE: On Google Cloud (App Engine/Cloud Run), it automatically picks up the project ID and credentials.
