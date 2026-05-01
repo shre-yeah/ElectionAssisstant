@@ -48,11 +48,15 @@ try {
     const vertexAI = new VertexAI({ project: project, location: location });
     generativeModel = vertexAI.getGenerativeModel({
         model: 'gemini-2.5-pro',
+        systemInstruction: { parts: [{ text: "You are a professional, accurate Indian Election Assistant. You provide concise, neutral, and helpful information regarding Indian elections, voting procedures, and timelines." }] },
         generationConfig: { temperature: 0.2 }
     });
 } catch (error) {
     console.error("Warning: Failed to initialize Vertex AI client:", error.message);
 }
+
+// Simple in-memory cache for efficiency (Reduces Vertex AI API calls)
+const timelineCache = {};
 
 // Endpoint to provide the Maps API key to the frontend
 app.get('/api/maps-key', (req, res) => {
@@ -72,16 +76,25 @@ app.post('/api/timeline', async (req, res) => {
     Format your response EXACTLY as a JSON array of objects, with each object having a 'title' and 'desc' field. Do not include markdown code blocks, just the raw JSON.
     Example: [{"title": "Notification", "desc": "Official announcement"}, {"title": "Polling", "desc": "Voting day"}]`;
 
+    // Efficiency: Check cache first (expires after 1 hour)
+    if (timelineCache[language] && (Date.now() - timelineCache[language].timestamp < 3600000)) {
+        return res.json(timelineCache[language].data);
+    }
+
     try {
         const resp = await generativeModel.generateContent({
             contents: [{ role: 'user', parts: [{ text: prompt }] }]
         });
-
+        
         let rawText = resp.response.candidates[0].content.parts[0].text;
         // Clean markdown code blocks if the model includes them
         rawText = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
-
+        
         const timelineData = JSON.parse(rawText);
+        
+        // Save to cache
+        timelineCache[language] = { data: timelineData, timestamp: Date.now() };
+        
         res.json(timelineData);
     } catch (error) {
         console.error("Timeline Generation Error:", error);

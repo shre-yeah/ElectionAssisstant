@@ -1,4 +1,22 @@
 const request = require('supertest');
+
+// Mock VertexAI to prevent real API calls and timeouts during tests
+jest.mock('@google-cloud/vertexai', () => {
+    return {
+        VertexAI: jest.fn().mockImplementation(() => {
+            return {
+                getGenerativeModel: jest.fn().mockReturnValue({
+                    generateContent: jest.fn().mockResolvedValue({
+                        response: {
+                            candidates: [{ content: { parts: [{ text: '{"mock": "data"}' }] } }]
+                        }
+                    })
+                })
+            };
+        })
+    };
+});
+
 const app = require('../server');
 
 describe('Backend API Endpoints', () => {
@@ -14,20 +32,15 @@ describe('Backend API Endpoints', () => {
     });
 
     describe('POST /api/chat', () => {
-        it('should block excessive requests (Rate Limiting check)', async () => {
-            // We can test rate limiting by hitting the endpoint 31 times
-            // However, this might slow down the test suite or break other tests.
-            // For now, we'll just check if the endpoint exists and returns 500 when Vertex AI isn't mocked,
-            // or 200 if Vertex AI works. Since we don't mock Vertex AI here, it might return 500 locally.
+
+        it('should return 200 for a valid chat request', async () => {
             const res = await request(app)
                 .post('/api/chat')
                 .send({ message: 'Hello', lang: 'en' });
-                
-            // Either it succeeds (200) or fails cleanly due to missing Vertex config (500)
-            expect([200, 500]).toContain(res.statusCode);
-            if (res.statusCode === 500) {
-                expect(res.body).toHaveProperty('error');
-            }
+            
+            // Should succeed because Vertex is mocked
+            expect(res.statusCode).toEqual(200);
+            expect(res.body).toHaveProperty('reply');
         });
         
         it('should return 404 for invalid API routes', async () => {
@@ -44,6 +57,23 @@ describe('Backend API Endpoints', () => {
             // Helmet adds x-dns-prefetch-control, x-frame-options, etc.
             expect(res.headers).toHaveProperty('x-frame-options');
             expect(res.headers).toHaveProperty('x-xss-protection');
+        });
+    });
+
+    describe('Rate Limiting', () => {
+        it('should block excessive requests across the API', async () => {
+            // Hit the endpoint enough times to trigger the 30 request limit
+            // Since previous tests used ~3 requests, doing 31 guarantees we hit it.
+            let lastRes;
+            for (let i = 0; i < 31; i++) {
+                lastRes = await request(app)
+                    .post('/api/chat')
+                    .send({ message: 'Hello', lang: 'en' });
+            }
+                
+            // The request should be blocked by express-rate-limit with a 429 status code
+            expect(lastRes.statusCode).toEqual(429);
+            expect(lastRes.text).toContain('Too many requests');
         });
     });
 
