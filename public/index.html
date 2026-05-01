@@ -19,8 +19,8 @@
             </div>
             <div class="controls">
                 <!-- Settings removed for backend -->
-                <button id="audio-toggle" class="btn outline" data-i18n="audioOnBtn">Turn Audio On</button>
-                <button id="lang-toggle" class="btn primary" data-i18n="langToggle">हिंदी में देखें</button>
+                <button id="audio-toggle" class="btn outline" aria-label="Toggle Text to Speech Audio" data-i18n="audioOnBtn">Turn Audio On</button>
+                <button id="lang-toggle" class="btn primary" aria-label="Toggle Language between English and Hindi" data-i18n="langToggle">हिंदी में देखें</button>
             </div>
         </div>
         <p class="tagline" data-i18n="tagline">Your interactive guide to the democratic process</p>
@@ -28,19 +28,19 @@
 
     <main>
         <!-- Weather Alert Banner -->
-        <div id="weather-banner" class="weather-banner hidden">
-            <span class="weather-icon">⚠️</span>
+        <div id="weather-banner" class="weather-banner hidden" aria-live="polite">
+            <span class="weather-icon" aria-hidden="true">⚠️</span>
             <span id="weather-text">Weather checking...</span>
         </div>
 
         <section id="location-booth" class="section glass-panel">
             <h2>Find My Polling Booth</h2>
             <div class="location-controls">
-                <button id="locate-me-btn" class="btn primary">Locate Me & Find Route</button>
-                <p id="location-status" class="status-text"></p>
+                <button id="locate-me-btn" class="btn primary" aria-label="Locate me and find nearest polling booth">Locate Me & Find Route</button>
+                <p id="location-status" class="status-text" aria-live="polite"></p>
             </div>
-            <div id="crowd-banner" class="weather-banner hidden" style="margin-top: 1rem; margin-bottom: 0;">
-                <span id="crowd-icon">👥</span>
+            <div id="crowd-banner" class="weather-banner hidden" style="margin-top: 1rem; margin-bottom: 0;" aria-live="polite">
+                <span id="crowd-icon" aria-hidden="true">👥</span>
                 <span id="crowd-text">Checking booth crowd levels...</span>
             </div>
             <div id="map-container" class="map-container hidden">
@@ -51,10 +51,10 @@
         <section id="timeline" class="section glass-panel">
             <h2 data-i18n="timelineTitle">Election Timeline</h2>
             <div class="timeline-controls text-center">
-                <button id="generate-timeline-btn" class="btn primary">Get Live Timelines (Nearest Election)</button>
-                <p id="timeline-status" class="status-text"></p>
+                <button id="generate-timeline-btn" class="btn primary" aria-label="Fetch latest election timelines">Get Live Timelines (Nearest Election)</button>
+                <p id="timeline-status" class="status-text" aria-live="polite"></p>
             </div>
-            <div id="dynamic-timeline-container" class="timeline-container hidden">
+            <div id="dynamic-timeline-container" class="timeline-container hidden" aria-live="polite">
                 <!-- Populated by Vertex AI -->
             </div>
         </section>
@@ -88,15 +88,15 @@
 
     <!-- Chat Assistant Widget -->
     <div id="chat-widget" class="chat-widget closed">
-        <div class="chat-header" id="chat-header-btn">
+        <div class="chat-header" id="chat-header-btn" role="button" tabindex="0" aria-label="Toggle Chat Assistant">
             <div class="chat-title">
-                <span class="chat-icon">💬</span>
+                <span class="chat-icon" aria-hidden="true">💬</span>
                 <span data-i18n="chatHeader">Election Assistant</span>
             </div>
-            <button class="close-chat-btn">✖</button>
+            <button class="close-chat-btn" aria-label="Close Chat">✖</button>
         </div>
         <div class="chat-body">
-            <div class="chat-messages" id="chat-messages">
+            <div class="chat-messages" id="chat-messages" aria-live="polite" aria-relevant="additions">
                 <div class="message bot">
                     <div class="message-content" data-i18n="chatGreeting">
                         Hello! I am your Election Assistant. How can I help you today?
@@ -109,8 +109,8 @@
                 <button class="qr-btn" data-intent="evm" data-i18n="qrEVM">How to use an EVM?</button>
             </div>
             <div class="chat-input-area">
-                <input type="text" id="chat-input" placeholder="Ask a question..." data-i18n-placeholder="chatInputPlaceholder">
-                <button id="chat-send" data-i18n="chatSendButton">Send</button>
+                <input type="text" id="chat-input" aria-label="Type your question here" placeholder="Ask a question..." data-i18n-placeholder="chatInputPlaceholder">
+                <button id="chat-send" data-i18n="chatSendButton" aria-label="Send message">Send</button>
             </div>
         </div>
     </div>

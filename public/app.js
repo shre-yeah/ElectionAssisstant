@@ -49,6 +49,7 @@ async function init() {
 // Translations
 function toggleLanguage() {
     currentLang = currentLang === 'en' ? 'hi' : 'en';
+    document.documentElement.lang = currentLang; // Accessibility: update lang attribute
     applyTranslations(currentLang);
 }
 
@@ -92,7 +93,7 @@ function speakText(text) {
 function loadGoogleMapsScript() {
     if (window.google && window.google.maps) return;
     const script = document.createElement('script');
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${mapsKey}&callback=initMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${mapsKey}&loading=async&callback=initMap`;
     script.async = true;
     script.defer = true;
     window.initMap = function() {
