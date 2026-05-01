@@ -37,15 +37,18 @@ const apiLimiter = rateLimit({
 app.use('/api/', apiLimiter);
 
 // Initialize Vertex AI
-// NOTE: On Google Cloud (App Engine/Cloud Run), it automatically picks up the project ID and credentials.
-// For local testing, ensure GOOGLE_CLOUD_PROJECT is set in .env
-const project = process.env.GOOGLE_CLOUD_PROJECT || 'your-project-id';
+// On Cloud Run, it automatically picks up the project ID from the metadata server if not explicitly passed.
 const location = 'us-central1';
 
 // We use try-catch to allow the app to boot even if Vertex isn't configured perfectly locally
 let generativeModel;
 try {
-    const vertexAI = new VertexAI({ project: project, location: location });
+    // If running locally, it uses GOOGLE_CLOUD_PROJECT. If deployed, it can auto-detect if left undefined.
+    const vertexOptions = { location: location };
+    if (process.env.GOOGLE_CLOUD_PROJECT) {
+        vertexOptions.project = process.env.GOOGLE_CLOUD_PROJECT;
+    }
+    const vertexAI = new VertexAI(vertexOptions);
     generativeModel = vertexAI.getGenerativeModel({
         model: 'gemini-2.5-pro',
         systemInstruction: { parts: [{ text: "You are a professional, accurate Indian Election Assistant. You provide concise, neutral, and helpful information regarding Indian elections, voting procedures, and timelines." }] },
